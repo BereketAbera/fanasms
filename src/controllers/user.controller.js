@@ -13,18 +13,18 @@ const bcryptjs = require("bcryptjs");
 function login(req, res, next) {
   const valid = validateAccount(req.body);
   if (valid != true) {
-    res.status(500).json({ validationError: valid });
+    res.status(422).json({ validationError: valid });
     return;
   }
   authenticationHandler(req.body)
     .then((user) => res.status(200).send({ user }))
-    .catch((err) => res.status(500).send({ message: err }));
+    .catch((err) => res.status(403).send({ message: err }));
 }
 
 async function authenticationHandler({ username, password }) {
   const user = await userService.getUserByUserName(username);
   if (!user) {
-    throw "Username or Password incorrect";
+    throw "username or password incorrect";
   }
 
   const pass = bcryptjs.compareSync(password, user.password);
@@ -120,5 +120,4 @@ module.exports = {
   create_user,
   getUser,
   getOneUser,
-  getUserById
 };
