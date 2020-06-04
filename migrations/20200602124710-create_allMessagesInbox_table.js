@@ -1,7 +1,7 @@
 "use strict";
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable("allMessagesInbox", {
+    return queryInterface.createTable("messages", {
       id: {
         primaryKey: true,
         type: Sequelize.INTEGER,
@@ -33,6 +33,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable("allMessagesInbox");
+    return queryInterface.dropTable("messages");
   },
 };

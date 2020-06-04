@@ -40,6 +40,11 @@ module.exports = {
         allowNull: false,
         defaultValue: "TYPE1",
       },
+      status: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+      },
       lastLoggedIn: {
         type: Sequelize.DATE,
       },

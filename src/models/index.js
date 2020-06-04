@@ -1,6 +1,6 @@
 const sequelize = require("../database/connection");
 
-const AllMessagesInbox = sequelize.import("./allMessagesInbox.js");
+const Messages = sequelize.import("./messages.js");
 const ShortCode = sequelize.import("./shortCodes.js");
 const UniqueKey = sequelize.import("./uniqueKeys.js");
 const User = sequelize.import("./users.js");
@@ -14,8 +14,13 @@ const VotesInbox = sequelize.import("./votesInbox.js");
 
 ShortCode.hasMany(User);
 
+VoteOption.belongsTo(UniqueKey);
+VoteOption.belongsTo(VoteGroup);
+
+VoteGroup.hasMany(VoteOption);
+
 module.exports = {
-  AllMessagesInbox,
+  Messages,
   ShortCode,
   UniqueKey,
   User,

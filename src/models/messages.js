@@ -2,8 +2,8 @@
 const moment = require("moment");
 
 module.exports = function (sequelize, DataTypes) {
-  let allMessagesInbox = sequelize.define(
-    "allMessagesInbox",
+  let messages = sequelize.define(
+    "messages",
     {
       id: {
         primaryKey: true,
@@ -37,9 +37,9 @@ module.exports = function (sequelize, DataTypes) {
       },
     },
     {
-      tableName: "allMessagesInbox",
+      tableName: "messages",
     }
   );
 
-  return allMessagesInbox;
+  return messages;
 };

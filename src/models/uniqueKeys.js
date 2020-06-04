@@ -14,10 +14,14 @@ module.exports = function (sequelize, DataTypes) {
       key: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
       },
       type: {
         type: DataTypes.STRING,
+      },
+      status: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
       },
       createdAt: {
         allowNull: false,
