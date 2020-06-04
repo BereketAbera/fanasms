@@ -25,6 +25,19 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.STRING(10),
         allowNull: false,
       },
+      status: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+      },
+      ShortCodeId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: "shortCodes",
+          key: "id",
+        },
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,

@@ -18,8 +18,8 @@ module.exports = {
       message: {
         type: Sequelize.STRING,
       },
-      key: {
-        type: Sequelize.STRING,
+      uniqueKeyId: {
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       receivedDate: {

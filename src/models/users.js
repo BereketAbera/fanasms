@@ -44,6 +44,11 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: false,
         defaultValue: "TYPE1",
       },
+      status: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+      },
       lastLoggedIn: {
         type: DataTypes.DATE,
         defaultValue: moment.utc().format("YYYY-MM-DD HH:mm:ss"),
