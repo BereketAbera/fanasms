@@ -9,8 +9,8 @@ const VoteGroup = sequelize.import("./voteGroups.js");
 const VoteOption = sequelize.import("./voteOptions.js");
 const VotesInbox = sequelize.import("./votesInbox.js");
 
-User.belongsTo(UniqueKey);
-User.belongsTo(ShortCode);
+// User.belongsTo(UniqueKey);
+// User.belongsTo(ShortCode);
 
 ShortCode.hasMany(User);
 

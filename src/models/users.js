@@ -66,11 +66,11 @@ module.exports = function (sequelize, DataTypes) {
           key: "id",
         },
       },
-      VoteGroupId: {
+      ShortCodeId: {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
-          model: "voteGroups",
+          model: "shortCodes",
           key: "id",
         },
       },

@@ -6,6 +6,7 @@ const {
 const CONSTANTS = require('../../constant.js');
 const jwt = require('jsonwebtoken');
 const _ = require("lodash");
+const bcryptjs = require("bcryptjs");
 
 function login(req, res, next) {
   const valid = validateAccount(req.body);
@@ -13,22 +14,22 @@ function login(req, res, next) {
     res.status(500).json({ validationError: valid });
     return;
   }
-  authenticationHandler()
+  authenticationHandler(req.body)
     .then((user) => res.status(200).send({ user }))
     .catch((err) => res.status(500).send({ message: err }));
 }
 
-async function authenticationHandler({ email, password }) {
-  const user = await userService.getUserByUserName(email);
-
+async function authenticationHandler({ username, password }) {
+  console.log({username,password})
+  const user = await userService.getUserByUserName(username);
   if (!user) {
-    throw "Email or Password incorrect";
+    throw "Username or Password incorrect";
   }
 
   const pass = bcryptjs.compareSync(password, user.password);
 
   if (!pass) {
-    throw "email or password incorrect";
+    throw "username or password incorrect";
   }
 
   const token = jwt.sign({ sub: user.id, role: user.role, key: user.key }, CONSTANTS.JWTSECRET, { expiresIn: '24h' });
