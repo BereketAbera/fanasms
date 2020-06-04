@@ -1,4 +1,6 @@
 const userService = require("../services/users.service");
+const adminService = require("../services/admin.service");
+
 const { validateAccount, validateUser } = require("../_helpers/validator");
 const CONSTANTS = require("../../constant.js");
 const jwt = require("jsonwebtoken");
@@ -60,25 +62,64 @@ function create_user(req, res, next) {
 }
 
 async function handleCreateUser(body) {
-  console.log(body);
   const users = await userService.getUserByUserName(body.username);
   if (users) {
     throw "Username/Email is already in use";
   }
 
-  body["role"] = "USER";
+  const key = await adminService.getKeyByKeyname(body.key);
+  const shortcode = await adminService.getCodebyName(body.code);
+  if (key || !shortcode) {
+    throw "Key already exist/ no code exit with name";
+  }
 
+  const createKey = await adminService.addKey({ key: body.key, type: "USER" });
+
+  body["role"] = "USER";
+  body["UniqueKeyId"] = createKey.id;
+  body["ShortCodeId"] = shortcode.id;
   const createdUser = await userService.createUser(body);
-  if (!createdUser) {
+
+  if (!createdUser && !createKey) {
     throw "something went wrong";
   }
 
   let updatedUser = _.omit(createdUser.dataValues, ["password"]);
-  console.log(updatedUser);
   return { ...updatedUser };
+}
+
+function getUser(req, res, next) {
+  getAllUsers()
+    .then((user) => res.status(200).send({ user }))
+    .catch((err) => res.status(500).send({ message: err }));
+}
+
+async function getAllUsers() {
+  const user = userService.getAllUsers();
+  if (!user) {
+    throw "no User exist";
+  }
+  return user;
+}
+
+function getOneUser(req, res, next) {
+  getUserById(req.params.id)
+    .then((user) => res.status(200).send({ user }))
+    .catch((err) => res.status(500).send({ message: err }));
+}
+
+async function getUserById(id) {
+  const user = await userService.getUserById(id);
+  if (!user) {
+    throw "User doesn't exist";
+  }
+  return user;
 }
 
 module.exports = {
   login,
   create_user,
+  getUser,
+  getOneUser,
+  getUserById,
 };
