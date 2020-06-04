@@ -9,6 +9,10 @@ function create_code(req, res, next) {
 
 
 async function createCodeHandler(body){
+  const checkExit = await adminService.getCodebyName(body.code);
+  if(checkExit){
+    throw "Code is already Exist"
+  }
   const code= adminService.addShortCode(body);
   if(code){
     return code;

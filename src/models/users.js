@@ -58,7 +58,7 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.DATE,
         defaultValue: moment.utc().format("YYYY-MM-DD HH:mm:ss"),
       },
-      UniqueKeysId: {
+      UniqueKeyId: {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {

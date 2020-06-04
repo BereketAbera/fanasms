@@ -11,8 +11,18 @@ function createUser(user) {
   return User.create(user).catch(err => console.log(err));
 }
 
+function getAllUsers(){
+  return User.findAll().catch(err => console.log(err));
+}
+
+function getUserById(id){
+  return User.findOne({where:{id}}).catch(err => console.log(err));
+}
+
 module.exports = {
   addShortCode,
   getUserByUserName,
-  createUser
+  createUser,
+  getAllUsers,
+  getUserById
 };
