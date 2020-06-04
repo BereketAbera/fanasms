@@ -3,7 +3,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface
-      .addColumn("voteOptions", "UniqueKeysId", {
+      .addColumn("voteOptions", "UniqueKeyId", {
         type: Sequelize.INTEGER,
         references: {
           model: "uniqueKeys",
@@ -29,7 +29,7 @@ module.exports = {
 
   down: (queryInterface, Sequelize) => {
     return queryInterface
-      .removeColumn("voteOptions", "UniqueKeysId")
+      .removeColumn("voteOptions", "UniqueKeyId")
       .then(() => {
         return queryInterface.removeColumn("voteOptions", "VoteGroupId");
       });

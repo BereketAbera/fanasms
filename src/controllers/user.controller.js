@@ -1,10 +1,7 @@
 const userService = require("../services/users.service");
-const {
-  validateAccount,
-  validateUser
-} = require('../_helpers/validator');
-const CONSTANTS = require('../../constant.js');
-const jwt = require('jsonwebtoken');
+const { validateAccount, validateUser } = require("../_helpers/validator");
+const CONSTANTS = require("../../constant.js");
+const jwt = require("jsonwebtoken");
 const _ = require("lodash");
 const bcryptjs = require("bcryptjs");
 
@@ -20,7 +17,7 @@ function login(req, res, next) {
 }
 
 async function authenticationHandler({ username, password }) {
-  console.log({username,password})
+  console.log({ username, password });
   const user = await userService.getUserByUserName(username);
   if (!user) {
     throw "Username or Password incorrect";
@@ -32,7 +29,11 @@ async function authenticationHandler({ username, password }) {
     throw "username or password incorrect";
   }
 
-  const token = jwt.sign({ sub: user.id, role: user.role, key: user.key }, CONSTANTS.JWTSECRET, { expiresIn: '24h' });
+  const token = jwt.sign(
+    { sub: user.id, role: user.role, key: user.key },
+    CONSTANTS.JWTSECRET,
+    { expiresIn: "24h" }
+  );
   return {
     success: true,
     role: user.role,
@@ -44,8 +45,6 @@ async function authenticationHandler({ username, password }) {
     expiresIn: 86400,
     token: token,
   };
-
-
 }
 
 function create_user(req, res, next) {
@@ -60,13 +59,13 @@ function create_user(req, res, next) {
     .catch((err) => res.status(500).send({ message: err }));
 }
 
-async function handleCreateUser(body){
-  console.log(body)
+async function handleCreateUser(body) {
+  console.log(body);
   const users = await userService.getUserByUserName(body.username);
   if (users) {
     throw "Username/Email is already in use";
   }
-  
+
   body["role"] = "USER";
 
   const createdUser = await userService.createUser(body);
@@ -75,11 +74,11 @@ async function handleCreateUser(body){
   }
 
   let updatedUser = _.omit(createdUser.dataValues, ["password"]);
-  console.log(updatedUser)
-  return { ...updatedUser};
+  console.log(updatedUser);
+  return { ...updatedUser };
 }
 
 module.exports = {
   login,
-  create_user
+  create_user,
 };
