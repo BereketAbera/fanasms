@@ -30,6 +30,14 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: false,
         defaultValue: 1,
       },
+      ShortCodeId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: "shortCodes",
+          key: "id",
+        },
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
