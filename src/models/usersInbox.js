@@ -11,7 +11,7 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: false,
         autoIncrement: true,
       },
-      code: {
+      shortCode: {
         type: DataTypes.STRING(10),
         allowNull: false,
       },
@@ -21,8 +21,8 @@ module.exports = function (sequelize, DataTypes) {
       message: {
         type: DataTypes.STRING,
       },
-      key: {
-        type: DataTypes.STRING,
+      uniqueKeyId: {
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       receivedDate: {

@@ -45,14 +45,6 @@ module.exports = function (sequelize, DataTypes) {
           key: "id",
         },
       },
-      ShortCodeId: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-          model: "shortCodes",
-          key: "id",
-        },
-      },
     },
     {
       tableName: "voteOptions",
