@@ -1,16 +1,35 @@
 const userService = require("../services/users.service");
+const adminService = require("../services/admin.service");
 
-function login(req, res, next) {
-  userService
-    .addShortCode({
-      code: "8181",
-      defaultReply: "Welcome to 8181",
-      defaultMessage: "Hello join 8181",
-    })
-    .then((sc) => res.status(200).send({ shortCode: sc }))
+function create_code(req, res, next) {
+  createCodeHandler(req.body)
+    .then((code) => res.status(200).send({ shortCode: code }))
     .catch((err) => res.status(500).send({ message: err }));
 }
 
+
+async function createCodeHandler(body){
+  const code= adminService.addShortCode(body);
+  if(code){
+    return code;
+  }
+}
+
+function create_key(req, res, next) {
+  createKeyHandler(req.body)
+    .then((code) => res.status(200).send({ shortCode: code }))
+    .catch((err) => res.status(500).send({ message: err }));
+}
+
+async function createKeyHandler(body){
+  const code= adminService.addKey(body);
+  if(code){
+    return code;
+  }
+}
+
+
 module.exports = {
-  login,
+  create_code,
+  create_key
 };
