@@ -16,7 +16,7 @@ app.get("/voteOption/:id",adminController.getVoteOption);
 app.get("/voteGroup",adminController.getGroupOption);
 app.get("/shortcode",adminController.getShortCode);
 app.get("/message",adminController.getAllMessage);
-app.get("user/message/:id",adminController.getUserMessage);
+app.get("/user/message/:id",adminController.getUserMessage);
 
 app.put("/user/deactivate",userController.deactivateUser);
 app.put("/shortcode",adminController.editShortCode);

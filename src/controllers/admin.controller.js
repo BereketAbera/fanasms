@@ -77,7 +77,6 @@ async function createVoteOptionHandler(body) {
 
   body["UniqueKeyId"] = createKey.id;
   body['VoteGroupId'] = voteGroup.id;
-   console.log(body);
   const createVote = await adminService.createVoteOption(body);
   if (!createVote) {
     throw "Not created! try again";
@@ -95,7 +94,7 @@ function getGroupOption(req, res, next) {
 async function getVoteGroupAll() {
   const votegroups = await adminService.getAllVoteGroups();
   if (!votegroups) {
-    throw "Didn't Fetch from API"
+    throw "didn't Fetch from API"
   }
   return votegroups;
 }
