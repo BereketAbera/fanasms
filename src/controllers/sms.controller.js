@@ -12,7 +12,7 @@ function incomingSms(req, res, next) {
       }
     })
     .catch((err) => {
-      console.log(err);
+      // console.log(err);
       res.status(500).send({ message: "server error" });
     });
 }
@@ -48,7 +48,7 @@ function userSms(req, res, next) {
 
 async function userSmsHandler(message) {
   let { key, msg } = parseKey(message.message);
-  let user = await smsService.getUserWithKey(key);
+  let user = await smsService.getUserWithKey(key, message.shortCode);
   if (user) {
     let userSms = await smsService.addUserInbox({
       shortCode: message.shortCode,
@@ -72,36 +72,54 @@ function voteSms(req, res, next) {
       if (response.processed) {
         res.status(200).send({ processed: true });
       } else {
-        res.status(200);
+        res.status(400).send({ ...response });
       }
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).send({ message: "server error" });
     });
 }
 
 async function voteSmsHandler(message, key, msg) {
-  let voteOption = await smsService.getVoteOptionWithKey(key);
+  let voteOption = await smsService.getVoteOptionWithKey(
+    key,
+    message.shortCode
+  );
   if (voteOption) {
-    let voteSms = await smsService.addVoteInbox({
+    let prevVote = await smsService.getVote(
+      voteOption.UniqueKeyId,
+      message.phoneNumber
+    );
+    if (!prevVote) {
+      let voteSms = await smsService.addVoteInbox({
+        shortCode: message.shortCode,
+        phoneNumber: message.phoneNumber,
+        receivedDate: moment(message.date).format("YYYY-MM-DD HH:mm:ss"),
+        uniqueKeyId: voteOption.UniqueKeyId,
+        message: msg,
+      });
+      if (voteSms) {
+        return { processed: true };
+      }
+    } else {
+      return { processed: false, message: "Already Voted" };
+    }
+  } else {
+    let userInfo = await smsService.getUserInfoWithKey("INFO");
+    await smsService.addUserInbox({
       shortCode: message.shortCode,
       phoneNumber: message.phoneNumber,
       receivedDate: moment(message.date).format("YYYY-MM-DD HH:mm:ss"),
-      uniqueKeyId: voteOption.UniqueKeyId,
+      uniqueKeyId: userInfo.UniqueKeyId,
       message: msg,
     });
-    if (voteSms) {
-      return { processed: true };
-    }
-  } else {
-    return { processed: false };
+    return { processed: false, message: "Key not found." };
   }
 }
 
 function parseKey(message) {
   message = message.trim();
-  let key = message.split(" ")[0] || "";
+  let key = message.split(" ")[0].toUpperCase() || "";
   let msg = message.slice(key.length).trim();
 
   return { key, msg };
