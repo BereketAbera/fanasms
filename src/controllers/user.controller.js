@@ -19,7 +19,7 @@ function login(req, res, next) {
 }
 
 async function authenticationHandler({ username, password }) {
-  console.log({ username, password });
+  // console.log({ username, password });
   const user = await userService.getUserByUserName(username);
   if (!user) {
     throw "username or password incorrect";
@@ -37,7 +37,6 @@ async function authenticationHandler({ username, password }) {
     { expiresIn: "24h" }
   );
   return {
-    success: true,
     role: user.role,
     name: user.fullName,
     username: user.username,
@@ -116,10 +115,29 @@ async function getUserById(id) {
   return user;
 }
 
+function deactivateUser(req,res,next){
+  deactivateUserById(req.params.id)
+  .then((user) => res.status(200).send({ user }))
+  .catch((err) => res.status(500).send({ message: err }));
+}
+
+async function deactivateUserById(id){
+  const user = await userService.getUserById(id);
+  if(!user){
+    throw "User not Found"
+  }
+  const users= await userService.deactivateUser(user);
+  if(!users){
+    throw "Internal Server error"
+  }
+  users;
+}
+
 module.exports = {
   login,
   create_user,
   getUser,
   getOneUser,
   getUserById,
+  deactivateUser
 };

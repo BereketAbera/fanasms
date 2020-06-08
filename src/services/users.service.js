@@ -12,11 +12,15 @@ function createUser(user) {
 }
 
 function getAllUsers(){
-  return User.findAll().catch(err => console.log(err));
+  return User.findAndCountAll().catch(err => console.log(err));
 }
 
 function getUserById(id){
   return User.findOne({where:{id}}).catch(err => console.log(err));
+}
+
+function deactivateUser(user){
+  return user.update({status:0}).catch(err => console.log(err));
 }
 
 module.exports = {
@@ -24,5 +28,6 @@ module.exports = {
   getUserByUserName,
   createUser,
   getAllUsers,
-  getUserById
+  getUserById,
+  deactivateUser
 };

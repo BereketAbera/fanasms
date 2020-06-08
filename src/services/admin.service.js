@@ -1,4 +1,4 @@
-const { ShortCode,UniqueKey,VoteGroup,VoteOption } = require("../models");
+const { ShortCode,UniqueKey,VoteGroup,VoteOption,Message,UsersInbox} = require("../models");
 
 function addShortCode(shortCode) {
   return ShortCode.create(shortCode).catch((err) => console.log(err));
@@ -27,6 +27,25 @@ function createVoteOption(vote){
   return VoteOption.create(vote).catch((err) => console.log(err));
 }
 
+function getVoteOptionByVoteGroupId(id){
+  return VoteOption.findAll({where:{VoteGroupId:id}}).catch((err) => console.log(err));
+}
+
+function getAllVoteGroups(){
+  return VoteGroup.findAndCountAll().catch((err) => console.log(err));
+}
+
+function getAllShortCodes(){
+  return ShortCode.findAndCountAll().catch((err) => console.log(err));
+}
+
+function getAllMessages(){
+  return Message.findAndCountAll().catch((err) => console.log(err));
+}
+function getUserMessages(id){
+  return Message.findAndCountAll({where:{uniqueKeyId:id}}).catch((err) => console.log(err));
+}
+
 module.exports = {
   addShortCode,
   addKey,
@@ -34,5 +53,10 @@ module.exports = {
   getKeyByKeyname,
   createVoteGroup,
   createVoteOption,
-  getVoteGroupbyId
+  getVoteGroupbyId,
+  getVoteOptionByVoteGroupId,
+  getAllVoteGroups,
+  getAllShortCodes,
+  getAllMessages,
+  getUserMessages
 };
