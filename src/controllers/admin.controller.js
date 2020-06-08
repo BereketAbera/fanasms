@@ -154,6 +154,24 @@ async function getUserMessageHandler(id){
   return message;
 }
 
+function editShortCode(req,res,next){
+  editShortCodeHandler(req.body)
+    .then((resp) => res.status(200).send({ message: resp }))
+    .catch((err) => res.status(500).send({ message: err }));
+}
+
+async function editShortCodeHandler(body){
+  const shortcode= await adminService.getShortCodeById(body.id);
+  if(!shortcode){
+    throw "Not short code exist by this id"
+  }
+  const updatecode = await adminService.updateShortCode(shortcode,body);
+  if(updatecode){
+    return updatecode;
+  }
+  throw "Un able to update"
+}
+
 
 module.exports = {
   create_code,
@@ -164,5 +182,6 @@ module.exports = {
   getShortCode,
   getVoteOption,
   getAllMessage,
-  getUserMessage
+  getUserMessage,
+  editShortCode
 };

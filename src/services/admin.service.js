@@ -46,6 +46,12 @@ function getUserMessages(id){
   return Message.findAndCountAll({where:{uniqueKeyId:id}}).catch((err) => console.log(err));
 }
 
+function getShortCodeById(id){
+  return ShortCode.findOne({where:{id}}).catch((err) => console.log(err));
+}
+function updateShortCode(shortCode,body){
+  return shortCode.update(body).catch((err) => console.log(err));
+}
 module.exports = {
   addShortCode,
   addKey,
@@ -58,5 +64,7 @@ module.exports = {
   getAllVoteGroups,
   getAllShortCodes,
   getAllMessages,
-  getUserMessages
+  getUserMessages,
+  getShortCodeById,
+  updateShortCode
 };
