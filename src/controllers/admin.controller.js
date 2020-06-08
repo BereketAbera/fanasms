@@ -1,7 +1,13 @@
 const userService = require("../services/users.service");
 const adminService = require("../services/admin.service");
+const { validateAccount, validateCode } = require("../_helpers/validator");
 
 function create_code(req, res, next) {
+  const valid = validateCode(req.body);
+  if (valid != true) {
+    res.status(422).json({ message: valid });
+    return;
+  }
   createCodeHandler(req.body)
     .then((code) => res.status(200).send({ shortCode: code }))
     .catch((err) => res.status(500).send({ message: err }));
@@ -9,6 +15,7 @@ function create_code(req, res, next) {
 
 
 async function createCodeHandler(body) {
+
   const checkExit = await adminService.getCodebyName(body.code);
   if (checkExit) {
     throw "Code is already Exist"
@@ -86,13 +93,23 @@ async function createVoteOptionHandler(body) {
 
 
 function getGroupOption(req, res, next) {
-  getVoteGroupAll()
+  const {page,pageSize} = req.query;
+  // console.log(page,pageSize)
+  getVoteGroupAll(page || 1 ,pageSize || 8)
     .then((resp) => res.status(200).send({ vote: resp }))
     .catch((err) => res.status(500).send({ message: err }));
 }
 
-async function getVoteGroupAll() {
-  const votegroups = await adminService.getAllVoteGroups();
+async function getVoteGroupAll(page,pageSize) {
+  const pager = {
+    pageSize: parseInt(pageSize),
+    totalItems: 0,
+    totalPages: 0,
+    currentPage: parseInt(page)
+  };
+  const offset = (page - 1) * pager.pageSize;
+  const limit = pager.pageSize
+  const votegroups = await adminService.getAllVoteGroups(offset,limit);
   if (!votegroups) {
     throw "didn't Fetch from API"
   }
@@ -115,13 +132,23 @@ async function getVoteOptionByVoteGroupId(id) {
 }
 
 function getShortCode(req, res, next) {
-  getAllShortCode()
+  const {page,pageSize} = req.query;
+  getAllShortCode(page || 1,pageSize || 8) 
     .then((resp) => res.status(200).send({ code: resp }))
     .catch((err) => res.status(500).send({ message: err }));
 }
 
-async function getAllShortCode() {
-  const shortcode = await adminService.getAllShortCodes();
+async function getAllShortCode(page,pageSize) {
+  const pager = {
+    pageSize: parseInt(pageSize),
+    totalItems: 0,
+    totalPages: 0,
+    currentPage: parseInt(page)
+  };
+  const offset = (page - 1) * pager.pageSize;
+  const limit = pager.pageSize;
+
+  const shortcode = await adminService.getAllShortCodes(offset,limit);
   if (!shortcode) {
     throw "Unable to fetch shortcodes"
   }
@@ -129,13 +156,22 @@ async function getAllShortCode() {
 }
 
 function getAllMessage(req, res, next) {
-  getAllMessageHandler()
+  const {page,pageSize} = req.query;
+  getAllMessageHandler(page || 1, pageSize || 8)
     .then((resp) => res.status(200).send({ message: resp }))
     .catch((err) => res.status(500).send({ message: err }));
 }
 
-async function getAllMessageHandler(){
-  const message = await adminService.getAllMessages();
+async function getAllMessageHandler(page,pageSize){
+  const pager = {
+    pageSize: parseInt(pageSize),
+    totalItems: 0,
+    totalPages: 0,
+    currentPage: parseInt(page)
+  };
+  const offset = (page - 1) * pager.pageSize;
+  const limit = pager.pageSize;
+  const message = await adminService.getAllMessages(offset,limit);
   if(!message){
     throw "unable to fetch messages"
   }

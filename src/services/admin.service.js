@@ -31,16 +31,16 @@ function getVoteOptionByVoteGroupId(id){
   return VoteOption.findAll({where:{VoteGroupId:id}}).catch((err) => console.log(err));
 }
 
-function getAllVoteGroups(){
-  return VoteGroup.findAndCountAll().catch((err) => console.log(err));
+function getAllVoteGroups(offset,limit){
+  return VoteGroup.findAndCountAll({offset,limit}).catch((err) => console.log(err));
 }
 
-function getAllShortCodes(){
-  return ShortCode.findAndCountAll().catch((err) => console.log(err));
+function getAllShortCodes(offset,limit){
+  return ShortCode.findAndCountAll({offset,limit}).catch((err) => console.log(err));
 }
 
-function getAllMessages(){
-  return Message.findAndCountAll().catch((err) => console.log(err));
+function getAllMessages(offset,limit){
+  return Message.findAndCountAll({offset,limit}).catch((err) => console.log(err));
 }
 function getUserMessages(id){
   return Message.findAndCountAll({where:{uniqueKeyId:id}}).catch((err) => console.log(err));
