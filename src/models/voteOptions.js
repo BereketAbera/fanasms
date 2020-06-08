@@ -44,6 +44,13 @@ module.exports = function (sequelize, DataTypes) {
           model: "uniqueKeys",
           key: "id",
         },
+      },VoteGroupId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: "voteGroups",
+          key: "id",
+        },
       },
     },
     {

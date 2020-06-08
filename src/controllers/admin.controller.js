@@ -69,12 +69,15 @@ async function createVoteOptionHandler(body) {
     throw "Key already exist/ no code exit with name";
   }
 
-  // const voteGroup = await adminService.getVoteGroupbyId(body.voteGroupId);
-  const createKey = await adminService.addKey({ key: body.key, type: "VOTE" });
+   const voteGroup = await adminService.getVoteGroupbyId(body.VoteGroupId);
+   if(!voteGroup){
+     throw "Not Group doesnt exist"
+   }
+   const createKey = await adminService.addKey({ key: body.key, type: "VOTE" });
 
   body["UniqueKeyId"] = createKey.id;
-  body['VoteGroupId'] = 1;
-
+  body['VoteGroupId'] = voteGroup.id;
+   console.log(body);
   const createVote = await adminService.createVoteOption(body);
   if (!createVote) {
     throw "Not created! try again";
