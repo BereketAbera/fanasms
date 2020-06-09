@@ -88,13 +88,15 @@ async function handleCreateUser(body) {
 }
 
 function getUser(req, res, next) {
-  getAllUsers()
+  let page = parseInt(req.query.page) || 1;
+  let perPage = parseInt(req.query.perPage) || 5;
+  getAllUsers(page, perPage)
     .then((user) => res.status(200).send({ user }))
     .catch((err) => res.status(500).send({ message: err }));
 }
 
-async function getAllUsers() {
-  const user = userService.getAllUsers();
+async function getAllUsers(page, perPage) {
+  const user = userService.getAllUsers(page, perPage);
   if (!user) {
     throw "no User exist";
   }
@@ -115,20 +117,20 @@ async function getUserById(id) {
   return user;
 }
 
-function deactivateUser(req,res,next){
+function deactivateUser(req, res, next) {
   deactivateUserById(req.params.id)
-  .then((user) => res.status(200).send({ user }))
-  .catch((err) => res.status(500).send({ message: err }));
+    .then((user) => res.status(200).send({ user }))
+    .catch((err) => res.status(500).send({ message: err }));
 }
 
-async function deactivateUserById(id){
+async function deactivateUserById(id) {
   const user = await userService.getUserById(id);
-  if(!user){
-    throw "User not Found"
+  if (!user) {
+    throw "User not Found";
   }
-  const users= await userService.deactivateUser(user);
-  if(!users){
-    throw "Internal Server error"
+  const users = await userService.deactivateUser(user);
+  if (!users) {
+    throw "Internal Server error";
   }
   users;
 }
@@ -139,5 +141,5 @@ module.exports = {
   getUser,
   getOneUser,
   getUserById,
-  deactivateUser
+  deactivateUser,
 };
