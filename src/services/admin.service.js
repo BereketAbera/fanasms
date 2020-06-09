@@ -35,7 +35,11 @@ function getAllVoteGroups(offset,limit){
   return VoteGroup.findAndCountAll({offset,limit}).catch((err) => console.log(err));
 }
 
-function getAllShortCodes(offset,limit){
+function getAllShortCodes(){
+  return ShortCode.findAll().catch((err) => console.log(err));
+}
+
+function getAllShortCodesWithOffset(offset,limit){
   return ShortCode.findAndCountAll({offset,limit}).catch((err) => console.log(err));
 }
 
@@ -63,6 +67,7 @@ module.exports = {
   getVoteOptionByVoteGroupId,
   getAllVoteGroups,
   getAllShortCodes,
+  getAllShortCodesWithOffset,
   getAllMessages,
   getUserMessages,
   getShortCodeById,

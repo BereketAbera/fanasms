@@ -15,7 +15,7 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      message: {
+      question: {
         type: DataTypes.STRING,
       },
       replyMessage: {

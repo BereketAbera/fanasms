@@ -14,7 +14,9 @@ app.get("/users",userController.getUser);
 app.get("/user/:id",jwtService.isAuthenticated, userController.getOneUser);
 app.get("/voteOption/:id",adminController.getVoteOption);
 app.get("/voteGroup",adminController.getGroupOption);
-app.get("/shortcode",adminController.getShortCode);
+app.get("/shortcode/pagination",adminController.getShortCodeWithPagination);
+app.get("/shortcodes",adminController.getShortCode);
+
 app.get("/message",adminController.getAllMessage);
 app.get("/user/message/:id",adminController.getUserMessage);
 
