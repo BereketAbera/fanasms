@@ -77,7 +77,7 @@ function validateUser(data) {
 
 
 function validateCode(data) {
-    console.log(data)
+    // console.log(data)
     const errors = {};
     let valid = true;
     const fields = [
