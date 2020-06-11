@@ -25,12 +25,10 @@ module.exports = function (sequelize, DataTypes) {
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
-        defaultValue: moment.utc().format("YYYY-MM-DD HH:mm:ss"),
       },
       updatedAt: {
         allowNull: false,
         type: DataTypes.DATE,
-        defaultValue: moment.utc().format("YYYY-MM-DD HH:mm:ss"),
       },
     },
     {
