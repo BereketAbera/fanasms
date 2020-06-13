@@ -11,6 +11,15 @@ app.post("/vote_group",adminController.createVoteGroup);
 app.post("/vote",adminController.createVoteOption);
 app.post("/vote_options",adminController.createVoteOptions)
 
+
+app.put("/user/status",userController.changeUserStatus);
+app.put("/shortCode/edit",adminController.editShortCode);
+app.put("/voteGroup/edit",adminController.editVoteGroup);
+app.put("/voteOption/edit",adminController.editVoteOption);
+app.put("/voteGroup/change_status",adminController.changeVoteGroupStatus);
+app.put("/user/suspend/:id",userController.suspendUser);
+app.delete("/voteOption/delete/:id",adminController.deleteVoteOption);
+
 app.get("/users",userController.getUser);
 app.get("/user/:id",jwtService.isAuthenticated, userController.getOneUser);
 app.get("/voteOption/:id",adminController.getVoteOption);
@@ -24,7 +33,4 @@ app.get("/voteGroup/detail/:id",adminController.getVoteGroupDetails);
 app.get("/messages",adminController.getAllMessage);
 app.get("/usermessage",jwtService.isAuthenticated, adminController.getUserMessage);
 
-app.put("/user/deactivate",userController.deactivateUser);
-app.put("/shortcode",adminController.editShortCode);
-app.put("/voteGroup/edit",adminController.editVoteGroup);
-app.put("/voteGroup/close/:id",adminController.closeVoteGroup);
+

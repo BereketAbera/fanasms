@@ -21,8 +21,8 @@ function getUserById(id) {
   return User.findOne({ where: { id } }).catch((err) => console.log(err));
 }
 
-function deactivateUser(user) {
-  return user.update({ status: 0 }).catch((err) => console.log(err));
+function changeUserStatus(user,status) {
+  return user.update({ status: status }).catch((err) => console.log(err));
 }
 
 module.exports = {
@@ -31,5 +31,5 @@ module.exports = {
   createUser,
   getAllUsers,
   getUserById,
-  deactivateUser,
+  changeUserStatus,
 };

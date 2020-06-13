@@ -55,7 +55,7 @@ async function createVoteGroupHandler(body) {
   }
 
   body["ShortCodeId"] = shortcode.id;
-
+  body['status'] = 2;
   const createVoteGroup = await adminService.createVoteGroup(body);
   if (!createVoteGroup) {
     throw "Not created! try again";
@@ -319,21 +319,30 @@ async function getUserMessageHandler(
   return message2;
 }
 
-function closeVoteGroup(req, res, next) {
-  closeVoteGroupHandler(req.params.id)
+function changeVoteGroupStatus(req, res, next) {
+  changeVoteGroupStatusHandler(req.body)
     .then(resp => res.status(200).send({ votegroup: resp }))
     .catch(err => res.status(500).send({ message: err }));
 }
 
-async function closeVoteGroupHandler(id) {
-  const votegroup = await adminService.getVoteGroupbyId(id);
+async function changeVoteGroupStatusHandler(body) {
+  /**
+   * Vote Group Status
+   * 0 - closed
+   * 1 - active
+   * 2 - pending
+   */
+  console.log(body)
+  const votegroup = await adminService.getVoteGroupbyId(body.id);
   if (!votegroup) {
     throw "No voteGroup exist by this id";
   }
-  const votes = await adminService.getVoteOptionByVoteGroupId(id);
+  body.status >= 0? body.status:0;
+  const updateVote = await adminService.updateVoteGroup(votegroup,{status:body.status})
+  const votes = await adminService.getVoteOptionByVoteGroupId(body.id);
   votes.map(async (item) => {
     const updatevote = adminService.updateVoteOptionStatus(item);
-    if (uodatevote) {
+    if (updatevote) {
       return updatevote;
     } else { return false }
   })
@@ -341,6 +350,8 @@ async function closeVoteGroupHandler(id) {
     return { votegroup, vote: votes };
   }
 }
+
+
 
 function editVoteGroup(req, res, next) {
   const valid = validateVoteGroup(req.body);
@@ -372,7 +383,56 @@ async function editVoteGroupHandler(body) {
 
 }
 
+
+function editVoteOption(req, res, next) {
+  editVoteOptionHandler(req.body)
+    .then(resp => res.status(200).send({ voteoption: resp }))
+    .catch(err => res.status(500).send({ message: err }));
+}
+
+async function editVoteOptionHandler(body) {
+  const voteoptions = await adminService.getVoteOptionById(body.id);
+  if (!voteoptions) {
+    throw "No voteoption exist by this id";
+  }
+  
+  
+  const key = await adminService.getKeyByKeyname(body.key);
+  
+  if (key && key.id != voteoptions.UniqueKeyId) {
+    throw "Key already exist";
+  }
+
+  updatevote= await adminService.editVoteOption(voteoptions,body);
+  if (!updatevote) {
+    throw "Unable to update";
+  }
+  return updatevote;
+}
+
+function deleteVoteOption(req, res, next) {
+  deleteVoteOptionHandler(req.params.id)
+    .then(resp => res.status(200).send({ voteoption: resp }))
+    .catch(err => res.status(500).send({ message: err }));
+}
+
+async function deleteVoteOptionHandler(id){
+  const voteOption = await adminService.getVoteOptionById(id);
+  if(!voteOption){
+    throw "No VoteOption exist with id"
+  }
+  // console.log(voteOption)
+  const vote = await adminService.destroyVoteOption(id);
+  const vKey = await adminService.destroyKey(voteOption.UniqueKeyId);
+  if(!vote && !vKey){
+    throw "Fail to Delete"
+  }
+  return vote;
+}
+
+
 function editShortCode(req, res, next) {
+ 
   editShortCodeHandler(req.body)
     .then(resp => res.status(200).send({ message: resp }))
     .catch(err => res.status(500).send({ message: err }));
@@ -383,11 +443,16 @@ async function editShortCodeHandler(body) {
   if (!shortcode) {
     throw "Not short code exist by this id";
   }
-  const updatecode = await adminService.updateShortCode(shortcode, body);
-  if (updatecode) {
-    return updatecode;
+  if(body.defaultReply){
+    const updatecode = await adminService.updateShortCode(shortcode, body.defaultReply);
+    if (updatecode) {
+      return updatecode;
+    }
+    throw "Unable to update";
   }
-  throw "Un able to update";
+
+  return "Already Updated"
+  
 }
 
 function getVoteGroupDetails(req, res, next) {
@@ -402,10 +467,11 @@ async function getvoteGroupDetailHandler(id) {
     throw "No VoteGroup Found with Id";
   }
   const votes = await adminService.getVoteOptionByVoteGroupId(id);
+
   if (votes) {
-    return { votegroup, vote: votes };
+    return { votegroup, voteOption: votes };
   }
-  return { votegroup, vote: [] };
+  return { votegroup, voteOption: [] };
 }
 
 module.exports = {
@@ -422,6 +488,8 @@ module.exports = {
   getUserMessage,
   editShortCode,
   editVoteGroup,
-  closeVoteGroup,
+  editVoteOption,
+  deleteVoteOption,
+  changeVoteGroupStatus,
   getVoteGroupDetails
 };

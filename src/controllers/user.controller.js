@@ -117,13 +117,50 @@ async function getUserById(id) {
   return user;
 }
 
-function deactivateUser(req, res, next) {
-  deactivateUserById(req.params.id)
+function changeUserStatus(req, res, next) {
+  changeUserStatusById(req.body)
+    .then((user) => res.status(200).send({ user }))
+    .catch((err) => res.status(400).send({ message: err }));
+}
+
+async function changeUserStatusById(body) {
+  // console.log(body);
+  /** status 
+  0 deactivateUser
+  1 activate
+  2 suspendUse
+  **/
+  const user = await userService.getUserById(body.id);
+  if (!user) {
+    throw "User not Found";
+  }
+  const users = await userService.changeUserStatus(user, body.status);
+  const keys = await adminService.getKeyByKeyname(user.key);
+  if (keys && users.status == 0) {
+    const freekey = await adminService.changeKeyStatus(keys,0);
+  }
+  if(users.status == 1){
+    const keysStatus = await adminService.checkKeyStatus(user.key,0);
+    if(keysStatus){
+      const takeKey = await adminService.changeKeyStatus(keysStatus,1);
+    }
+    else{
+      throw "This key Taken"
+    }
+  }
+  if (!users) {
+    throw "Internal Server error";
+  }
+  return users;
+}
+
+function suspendUser(req, res, next) {
+  suspendUserById(req.params.id)
     .then((user) => res.status(200).send({ user }))
     .catch((err) => res.status(500).send({ message: err }));
 }
 
-async function deactivateUserById(id) {
+async function suspendUserById(id) {
   const user = await userService.getUserById(id);
   if (!user) {
     throw "User not Found";
@@ -132,8 +169,9 @@ async function deactivateUserById(id) {
   if (!users) {
     throw "Internal Server error";
   }
-  users;
+  return users;
 }
+
 
 module.exports = {
   login,
@@ -141,5 +179,6 @@ module.exports = {
   getUser,
   getOneUser,
   getUserById,
-  deactivateUser,
+  changeUserStatus,
+  suspendUser
 };
