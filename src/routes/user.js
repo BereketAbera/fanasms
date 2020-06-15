@@ -5,3 +5,4 @@ const adminController = require("../controllers/admin.controller");
 const jwtService = require("../services/jwt.service");
 
 app.get("/messages",jwtService.isAuthenticated, adminController.getUserMessage);
+app.get("/usermessages/live",jwtService.isAuthenticated,adminController.liveGetUserMessage);

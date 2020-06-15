@@ -29,6 +29,7 @@ async function allSmsHandler(message) {
 }
 
 function userSms(req, res, next) {
+
   let queryParams = req.query;
 
   userSmsHandler(queryParams)
@@ -57,6 +58,9 @@ async function userSmsHandler(message) {
       uniqueKeyId: user.UniqueKeyId,
       message: msg,
     });
+    
+    // servers.checkApp("hellos");
+    
     if (userSms) {
       return { processed: true };
     }
@@ -86,24 +90,22 @@ async function voteSmsHandler(message, key, msg) {
     message.shortCode
   );
   if (voteOption) {
-    let prevVote = await smsService.getVote(
-      voteOption.UniqueKeyId,
-      message.phoneNumber
-    );
-    if (!prevVote) {
-      let voteSms = await smsService.addVoteInbox({
-        shortCode: message.shortCode,
-        phoneNumber: message.phoneNumber,
-        receivedDate: moment(message.date).format("YYYY-MM-DD HH:mm:ss"),
-        uniqueKeyId: voteOption.UniqueKeyId,
-        message: msg,
-      });
-      if (voteSms) {
-        return { processed: true };
-      }
-    } else {
-      return { processed: false, message: "Already Voted" };
+    // let prevVote = await smsService.getVote(
+    //   voteOption.UniqueKeyId,
+    //   message.phoneNumber
+    // );
+
+    let voteSms = await smsService.addVoteInbox({
+      shortCode: message.shortCode,
+      phoneNumber: message.phoneNumber,
+      receivedDate: moment(message.date).format("YYYY-MM-DD HH:mm:ss"),
+      uniqueKeyId: voteOption.UniqueKeyId,
+      message: msg,
+    });
+    if (voteSms) {
+      return { processed: true };
     }
+
   } else {
     let userInfo = await smsService.getUserInfoWithKey("INFO");
     await smsService.addUserInbox({

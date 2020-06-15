@@ -11,6 +11,36 @@ const PORT = process.env.PORT || 3000;
 
 let app = express();
 
+
+var whitelist = [
+  "http://localhost:4200",
+  "http://192.168.0.103:4200",
+  "192.168.0.103:4200"
+];
+var corsOptionsDelegate = {
+  origin: function(origin, callback) {
+    console.log(origin)
+    if (whitelist.indexOf(origin) !== -1) {
+      corsOptions = { origin: true,credentials:true } 
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+    callback(null, corsOptions)
+  },
+
+};
+
+
+//  app.use(cors(corsOptionsDelegate));
+
+app.use(cors({
+  origin: 'http://localhost:4200',
+  credentials: true,
+}));
+
+const server = require('http').Server(app);
+const io = require('socket.io').listen(server);
+
 app.use(morgan("tiny"));
 app.use(express.static(__dirname + "/public"));
 
@@ -18,14 +48,30 @@ app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(cors());
-
 app.use(routes);
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+
+
+server.listen(PORT, () => {
   console.log(`server running at port ${PORT}`);
 });
+
+  // io.origins("http://localhost:4200");
+io.on('connection', (socket) => {
+  console.log("Connected");
+  // console.log(socket)
+  io.emit('this', { will: 'be received by everyone'});
+  socket.emit('message', { hello: 'world' });
+  socket.on('msg', (data) => {
+    console.log(data);
+  });
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
+
+
 
 module.exports = { app };

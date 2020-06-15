@@ -32,5 +32,3 @@ app.get("/voteGroup/detail/:id",adminController.getVoteGroupDetails);
 
 app.get("/messages",adminController.getAllMessage);
 app.get("/usermessage",jwtService.isAuthenticated, adminController.getUserMessage);
-
-

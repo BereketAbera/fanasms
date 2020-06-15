@@ -183,7 +183,7 @@ async function getVoteGroupAll(page, pageSize, sortDirection, sortActive) {
     sortActive
   );
   if (!votegroups) {
-    throw "didn't Fetch from API";
+    throw "Failed Fetch from API";
   }
   return votegroups;
 }
@@ -332,7 +332,7 @@ async function changeVoteGroupStatusHandler(body) {
    * 1 - active
    * 2 - pending
    */
-  console.log(body)
+  // console.log(body)
   const votegroup = await adminService.getVoteGroupbyId(body.id);
   if (!votegroup) {
     throw "No voteGroup exist by this id";
@@ -474,6 +474,16 @@ async function getvoteGroupDetailHandler(id) {
   return { votegroup, voteOption: [] };
 }
 
+function liveGetUserMessage(req, res, next) {
+  liveMessageHandler(req.params.id)
+    .then(resp => res.status(200).send({ vote: resp }))
+    .catch(err => res.status(500).send({ message: err }));
+}
+
+async function liveMessageHandler(){
+ 
+}
+
 module.exports = {
   create_code,
   create_key,
@@ -486,6 +496,7 @@ module.exports = {
   getVoteOption,
   getAllMessage,
   getUserMessage,
+  liveGetUserMessage,
   editShortCode,
   editVoteGroup,
   editVoteOption,
