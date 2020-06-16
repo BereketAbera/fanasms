@@ -1,5 +1,6 @@
 const smsService = require("../services/sms.service");
 const moment = require("moment");
+const {io} = require("../../server")
 
 function incomingSms(req, res, next) {
   let queryParams = req.query;
@@ -32,9 +33,10 @@ function userSms(req, res, next) {
 
   let queryParams = req.query;
 
-  userSmsHandler(queryParams)
+  userSmsHandler(queryParams,req)
     .then((response) => {
       if (response.processed) {
+        
         res.status(200).send({ processed: true });
       } else if (response.key) {
         req.key = response.key;
@@ -47,7 +49,7 @@ function userSms(req, res, next) {
     .catch((err) => res.status(500).send({ message: "server error" }));
 }
 
-async function userSmsHandler(message) {
+async function userSmsHandler(message,req) {
   let { key, msg } = parseKey(message.message);
   let user = await smsService.getUserWithKey(key, message.shortCode);
   if (user) {
@@ -58,9 +60,7 @@ async function userSmsHandler(message) {
       uniqueKeyId: user.UniqueKeyId,
       message: msg,
     });
-    
-    // servers.checkApp("hellos");
-    
+    req.io.sockets.emit(`${user.id}`,userSms);
     if (userSms) {
       return { processed: true };
     }

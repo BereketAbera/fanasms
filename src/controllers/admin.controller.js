@@ -2,6 +2,8 @@ const userService = require("../services/users.service");
 const adminService = require("../services/admin.service");
 const { validateVoteGroup, validateCode } = require("../_helpers/validator");
 const _ = require("lodash");
+const { io,app} = require("../../server")
+
 function create_code(req, res, next) {
   const valid = validateCode(req.body);
   if (valid != true) {
@@ -275,7 +277,7 @@ async function getAllMessageHandler(page, pageSize, date, msg, phoneNumber) {
 function getUserMessage(req, res, next) {
   // console.log(req)
   const { page, pageSize, date, message, phoneNumber } = req.query;
-
+  req.app.io.emit("message",'mssdf')
   getUserMessageHandler(
     req.user.id,
     page || 0,
@@ -474,15 +476,6 @@ async function getvoteGroupDetailHandler(id) {
   return { votegroup, voteOption: [] };
 }
 
-function liveGetUserMessage(req, res, next) {
-  liveMessageHandler(req.params.id)
-    .then(resp => res.status(200).send({ vote: resp }))
-    .catch(err => res.status(500).send({ message: err }));
-}
-
-async function liveMessageHandler(){
- 
-}
 
 module.exports = {
   create_code,
@@ -496,7 +489,6 @@ module.exports = {
   getVoteOption,
   getAllMessage,
   getUserMessage,
-  liveGetUserMessage,
   editShortCode,
   editVoteGroup,
   editVoteOption,
