@@ -154,7 +154,8 @@ function getUserMessages2(id, offset, limit, date, message, phonenumber) {
         }
       },
       offset,
-      limit
+      limit,
+      order: [["createdAt", "DESC"]]
     }).catch(err => console.log(err));
   } else {
     return UsersInbox.findAndCountAll({
@@ -166,7 +167,8 @@ function getUserMessages2(id, offset, limit, date, message, phonenumber) {
         ]
       },
       offset,
-      limit
+      limit,
+      order: [["createdAt", "DESC"]]
     }).catch(err => console.log(err));
   }
 }
