@@ -103,6 +103,7 @@ async function voteSmsHandler(message, key, msg) {
       message: msg,
     });
     if (voteSms) {
+      const voteoptin= await smsService.incerementCount(voteOption.id);
       return { processed: true };
     }
 

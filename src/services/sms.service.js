@@ -48,12 +48,19 @@ function getVoteInfoOptionWithKey(key) {
   );
 }
 
+function incerementCount(id) {
+  return VoteOption.increment('count', { where: { id } }).catch((err) =>
+    console.log(err)
+  );
+}
+
 module.exports = {
   addMessage,
   getUserWithKey,
   addUserInbox,
   getVoteOptionWithKey,
   addVoteInbox,
+  incerementCount,
   getVote,
   getVoteInfoOptionWithKey,
   getUserInfoWithKey,

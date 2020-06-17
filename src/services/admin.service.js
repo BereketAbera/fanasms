@@ -54,17 +54,8 @@ function createVoteOption(vote) {
 }
 
 async function getVoteOptionByVoteGroupId(id) {
-  let vots = VoteOption.findAll({
+  return VoteOption.findAll({
     where: { VoteGroupId: id }
-  });
-
-  return vots.map(async items => {
-
-    const count = await VotesInbox.count({
-      where: { uniqueKeyId: items.UniqueKeyId }
-    });
-    items.dataValues["counts"] = count;
-    return items;
   });
 }
 
