@@ -277,6 +277,7 @@ async function getAllMessageHandler(page, pageSize, date, msg, phoneNumber) {
 function getUserMessage(req, res, next) {
   // console.log(req)
   const { page, pageSize, date, message, phoneNumber } = req.query;
+  // req.app.io.emit("message",'mssdf')
   getUserMessageHandler(
     req.user.id,
     page || 0,
@@ -289,14 +290,7 @@ function getUserMessage(req, res, next) {
     .catch(err => res.status(500).send({ message: err }));
 }
 
-async function getUserMessageHandler(
-  id,
-  page,
-  pageSize,
-  date,
-  msg,
-  phoneNumber
-) {
+async function getUserMessageHandler(id, page, pageSize, date, msg, phoneNumber) {
   const offset = parseInt(page) * parseInt(pageSize);
   const limit = parseInt(pageSize);
   // console.log(date);

@@ -60,7 +60,7 @@ async function userSmsHandler(message,req) {
       uniqueKeyId: user.UniqueKeyId,
       message: msg,
     });
-    req.io.emit(`${user.id}`,userSms);
+     req.io.sockets.emit(`${user.id}`,userSms);
     if (userSms) {
       return { processed: true };
     }
