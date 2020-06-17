@@ -277,7 +277,6 @@ async function getAllMessageHandler(page, pageSize, date, msg, phoneNumber) {
 function getUserMessage(req, res, next) {
   // console.log(req)
   const { page, pageSize, date, message, phoneNumber } = req.query;
-  req.app.io.emit("message",'mssdf')
   getUserMessageHandler(
     req.user.id,
     page || 0,

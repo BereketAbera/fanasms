@@ -54,18 +54,12 @@ app.use(routes);
 app.use(errorHandler);
 // io.use(routes)
 
-
-
 io.on('connection', (socket) => {
   console.log("Connected");
-  // console.log(socket);
-  // console.log(socket)ssss
- 
-  // io.emit('this', { will: 'be received by everyone'});
-  // socket.emit('message', { hello: 'world' });
-  socket.on('msg', (data) => {
-    console.log(data);
-  });
+  // socket.on('msg', (data) => {
+  //   console.log(data);
+  // });
+  io.emit("message",{msg:"Welcome"})
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });

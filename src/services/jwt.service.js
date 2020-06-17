@@ -12,7 +12,7 @@ function isAuthenticated(req, res, next) {
                 let user = {
                     id: payload.sub,
                     role: payload.role,
-                    sellerProfileId: payload.key
+                    key: payload.key
                 };
                 req["user"] = user;
                 next();
@@ -51,8 +51,32 @@ function verify(token) {
     });
 }
 
+function isAdminGuard(req, res, next) {
+    let token = getTokenFromHeader(req);
+    if (token) {
+      verify(token)
+        .then(payload => {
+          if (payload.role !== "ADMIN") {
+            return res.status(401).send("Unauthorized");
+          }
+          let user = {
+            id: payload.id,
+            role: payload.role,
+          };
+          req["user"] = user;
+          next();
+        })
+        .catch(function(error) {
+          res.status(401).send("Unauthorized");
+        });
+    } else {
+      res.status(401).send("Unauthorized");
+    }
+  }
+
 module.exports = {
     isAuthenticated,
     getTokenFromHeader,
+    isAdminGuard,
     verify,
   };
