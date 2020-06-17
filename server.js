@@ -56,10 +56,7 @@ app.use(errorHandler);
 
 io.on('connection', (socket) => {
   console.log("Connected");
-  // socket.on('msg', (data) => {
-  //   console.log(data);
-  // });
-  io.emit("message",{msg:"Welcome"})
+  io.emit("message",{msg:"You are Connected"})
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
