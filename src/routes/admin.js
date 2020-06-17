@@ -26,9 +26,6 @@ app.get("/voteOption/:id",adminController.getVoteOption);
 app.get("/voteGroup",adminController.getGroupOption);
 app.get("/shortcode/pagination",adminController.getShortCodeWithPagination);
 app.get("/shortcodes",adminController.getShortCode);
-
-
 app.get("/voteGroup/detail/:id",adminController.getVoteGroupDetails);
-
 app.get("/messages",adminController.getAllMessage);
 app.get("/usermessage",jwtService.isAuthenticated, adminController.getUserMessage);

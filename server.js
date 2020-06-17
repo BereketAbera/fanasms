@@ -31,7 +31,7 @@ var corsOptionsDelegate = {
 };
 
 app.use(cors({
-  origin: 'http://localhost:4200',
+  origin: 'http://192.168.0.253:4200',
   credentials: true,
 }));
 
@@ -44,11 +44,13 @@ app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(function(req, res, next) {
   // console.log(io,'s')
   req['io'] = io;
   next();
 });
+
 app.use(routes);
 
 app.use(errorHandler);
@@ -56,11 +58,12 @@ app.use(errorHandler);
 
 io.on('connection', (socket) => {
   console.log("Connected");
-  io.emit("message",{msg:"You are Connected"})
+  socket.emit("message",{msg:"You are Connected"})
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
 });
+
 server.listen(PORT, () => {
   console.log(`server running at port ${PORT}`);
 });
