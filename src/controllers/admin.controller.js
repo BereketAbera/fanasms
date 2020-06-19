@@ -72,13 +72,16 @@ function createVoteOption(req, res, next) {
 }
 
 function createVoteOptions(req, res, next) {
+  const {body}=req.body;
+  
   createVoteOptionsHandler(req.body)
     .then(resp => res.status(200).send({ vote: resp }))
     .catch(err => res.status(500).send({ message: err }));
 }
 
 async function checkVoteOptions(data) {
-  const check = await Promise.all(
+  
+  const check =  await Promise.all(
     data.map(async (item, index) => {
       const key = await adminService.getKeyByKeyname(item.key);
       const shortcode = await adminService.getCodebyName(item.code);
@@ -103,13 +106,23 @@ async function checkVoteOptions(data) {
 async function createVoteOptionsHandler(body) {
   var erros = [];
   var result = await checkVoteOptions(body.voteOption);
+  console.log(result)
   var found = false;
+  let keys=[];
   for (var i = 0; i < result.length; i++) {
     if (result[i].success == false) {
       found = true;
       break;
     }
+    if(keys.includes(result[i].data.key)){
+      found = true;
+      result[i].success=false;
+      result[i]['error'] =  { index: i, msg: "Key already exists" };
+      break
+    }
+    keys.push(result[i].data.key);
   }
+  console.log(keys)
   if (found) {
     return result;
   }
@@ -335,12 +348,17 @@ async function changeVoteGroupStatusHandler(body) {
   body.status >= 0? body.status:0;
   const updateVote = await adminService.updateVoteGroup(votegroup,{status:body.status})
   const votes = await adminService.getVoteOptionByVoteGroupId(body.id);
-  votes.map(async (item) => {
-    const updatevote = adminService.updateVoteOptionStatus(item);
-    if (updatevote) {
-      return updatevote;
-    } else { return false }
-  })
+  if(body.status == 0){
+    votes.map(async (item) => {
+      const updatevote = adminService.updateVoteOptionStatus(item);
+      const keys = await adminService.getKeyByKeyname(item.key);
+      const changeKey = adminService.changeKeyStatus(keys,0);
+      if (updatevote && keys && changeKey) {
+        return updatevote;
+      } else { return false }
+    })
+  }
+
   if (votes) {
     return { votegroup, vote: votes };
   }

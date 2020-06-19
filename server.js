@@ -31,7 +31,7 @@ var corsOptionsDelegate = {
 };
 
 app.use(cors({
-  origin: 'http://192.168.0.253:4200',
+  origin: 'http://localhost:4200',
   credentials: true,
 }));
 

@@ -14,6 +14,7 @@ function getAllUsers(page, perPage) {
   return User.findAndCountAll({
     offset: (page - 1) * perPage,
     limit: perPage,
+    order: [["createdAt", "DESC"]]
   }).catch((err) => console.log(err));
 }
 
