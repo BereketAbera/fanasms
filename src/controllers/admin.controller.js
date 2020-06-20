@@ -106,7 +106,7 @@ async function checkVoteOptions(data) {
 async function createVoteOptionsHandler(body) {
   var erros = [];
   var result = await checkVoteOptions(body.voteOption);
-  console.log(result)
+  // console.log(result)
   var found = false;
   let keys=[];
   for (var i = 0; i < result.length; i++) {
@@ -117,12 +117,12 @@ async function createVoteOptionsHandler(body) {
     if(keys.includes(result[i].data.key)){
       found = true;
       result[i].success=false;
-      result[i]['error'] =  { index: i, msg: "Key already exists" };
+      result[i]['error'] =  { index: i, msg: "Duplicated Key" };
       break
     }
     keys.push(result[i].data.key);
   }
-  console.log(keys)
+  // console.log(keys)
   if (found) {
     return result;
   }

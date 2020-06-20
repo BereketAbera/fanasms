@@ -2,14 +2,14 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.addColumn("shortCodes", "count", {
+    return queryInterface.addColumn("shortCodes", "status", {
       type: Sequelize.INTEGER,
-      defaultValue: 0,
+      defaultValue: 1,
     });
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.removeColumn("shortCodes", "count");
+    return queryInterface.removeColumn("shortCodes", "status");
   },
 };
 
