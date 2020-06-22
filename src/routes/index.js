@@ -7,7 +7,7 @@ app.use("/api/auth", require("./auth"));
 app.use("/api/admin",jwtService.isAdminGuard, require("./admin"));
 app.use("/api/user", require("./user"));
 app.use("/api/sms",require("./sms"));
-app.use("api/v1/votes",adminController.getVoteGroupDetails)
+app.get("/api/votes/:id",adminController.getVotesAPI)
 // the catch all route
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "not found" });

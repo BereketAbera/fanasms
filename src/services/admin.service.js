@@ -59,6 +59,17 @@ async function getVoteOptionByVoteGroupId(id) {
   });
 }
 
+async function getVoteOptionByVotesAPI(id) {
+  return VoteOption.findAll({
+    where: { VoteGroupId: id }, attributes: [
+      ['choiceTitle', 'name'],
+      'key',
+      ['count', 'point']
+   ],
+  });
+}
+
+
 function countVote(id) {
   return VotesInbox.count({ where: { uniqueKeyId: id } }).catch(err =>
     console.log(err)
@@ -215,6 +226,7 @@ module.exports = {
   createVoteOption,
   getVoteGroupbyId,
   getVoteOptionByVoteGroupId,
+  getVoteOptionByVotesAPI,
   getAllVoteGroups,
   getAllShortCodes,
   getAllShortCodesWithOffset,

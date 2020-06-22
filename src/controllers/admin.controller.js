@@ -409,7 +409,6 @@ async function editVoteOptionHandler(body) {
     throw "No voteoption exist by this id";
   }
   
-  
   const key = await adminService.getKeyByKeyname(body.key);
   
   if (key && key.id != voteoptions.UniqueKeyId) {
@@ -445,7 +444,9 @@ async function deleteVoteOptionHandler(id){
 
 
 function editShortCode(req, res, next) {
- 
+  if(!req.body.defaultReply || req.body.defaultReply ==""){
+    res.status(401).send({message:"Empty value is not proccessed"})
+  }
   editShortCodeHandler(req.body)
     .then(resp => res.status(200).send({ message: resp }))
     .catch(err => res.status(500).send({ message: err }));
@@ -474,17 +475,36 @@ function getVoteGroupDetails(req, res, next) {
     .catch(err => res.status(500).send({ message: err }));
 }
 
+function getVotesAPI(req, res, next) {
+  getVotesOptionHandler(req.params.id)
+    .then(resp => res.status(200).send(resp))
+    .catch(err => res.status(400).send({ message: err }));
+}
+
+async function getVotesOptionHandler(id) {
+  const votegroup = await adminService.getVoteGroupbyId(id);
+  if (!votegroup) {
+    throw "Sorry! Votes is not found";
+  }
+  const votes = await adminService.getVoteOptionByVotesAPI(id);
+
+  if (!votes) {
+    throw "No Votes found in this id "
+  }
+  return votes;
+}
+
 async function getvoteGroupDetailHandler(id) {
   const votegroup = await adminService.getVoteGroupbyId(id);
   if (!votegroup) {
-    throw "No VoteGroup Found with Id";
+    throw "No Votes Found with id";
   }
   const votes = await adminService.getVoteOptionByVoteGroupId(id);
-
   if (votes) {
     return { votegroup, voteOption: votes };
   }
   return { votegroup, voteOption: [] };
+
 }
 
 
@@ -505,5 +525,6 @@ module.exports = {
   editVoteOption,
   deleteVoteOption,
   changeVoteGroupStatus,
-  getVoteGroupDetails
+  getVoteGroupDetails,
+  getVotesAPI
 };
