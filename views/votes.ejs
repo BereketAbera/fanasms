@@ -14,8 +14,7 @@
       .content {
         display: flex;
       }
-      table {
-      }
+     
 
       table {
         border-collapse: collapse;
@@ -40,8 +39,8 @@
       <%if (!response.success) { %>
       <div id="errorCntr">
         <ul id="erUl" class="errors">
-          <%= response.msg %>
-        </ul>
+        Fail to fetch from API
+              </ul>
         <!-- <p><%= response.msg %></p> -->
       </div>
       <% } %> <%if (response.success) { %>
