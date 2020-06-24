@@ -69,6 +69,13 @@ async function getVoteOptionByVotesAPI(id) {
   });
 }
 
+async function getVoteOptionByVotesAPI2(id) {
+  return VoteOption.findAll({
+    where: { VoteGroupId: id },
+  });
+}
+
+
 
 function countVote(id) {
   return VotesInbox.count({ where: { uniqueKeyId: id } }).catch(err =>
@@ -242,5 +249,6 @@ module.exports = {
   editVoteOption,
   destroyVoteOption,
   getKeyById,
-  destroyKey
+  destroyKey,
+  getVoteOptionByVotesAPI2
 };

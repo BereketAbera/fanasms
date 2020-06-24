@@ -2,7 +2,7 @@ const userService = require("../services/users.service");
 const adminService = require("../services/admin.service");
 const { validateVoteGroup, validateCode } = require("../_helpers/validator");
 const _ = require("lodash");
-const { io,app} = require("../../server")
+const { io, app } = require("../../server")
 
 function create_code(req, res, next) {
   const valid = validateCode(req.body);
@@ -72,16 +72,16 @@ function createVoteOption(req, res, next) {
 }
 
 function createVoteOptions(req, res, next) {
-  const {body}=req.body;
-  
+  const { body } = req.body;
+
   createVoteOptionsHandler(req.body)
     .then(resp => res.status(200).send({ vote: resp }))
     .catch(err => res.status(500).send({ message: err }));
 }
 
 async function checkVoteOptions(data) {
-  
-  const check =  await Promise.all(
+
+  const check = await Promise.all(
     data.map(async (item, index) => {
       const key = await adminService.getKeyByKeyname(item.key);
       const shortcode = await adminService.getCodebyName(item.code);
@@ -108,16 +108,16 @@ async function createVoteOptionsHandler(body) {
   var result = await checkVoteOptions(body.voteOption);
   // console.log(result)
   var found = false;
-  let keys=[];
+  let keys = [];
   for (var i = 0; i < result.length; i++) {
     if (result[i].success == false) {
       found = true;
       break;
     }
-    if(keys.includes(result[i].data.key)){
+    if (keys.includes(result[i].data.key)) {
       found = true;
-      result[i].success=false;
-      result[i]['error'] =  { index: i, msg: "Duplicated Key" };
+      result[i].success = false;
+      result[i]['error'] = { index: i, msg: "Duplicated Key" };
       break
     }
     keys.push(result[i].data.key);
@@ -345,14 +345,14 @@ async function changeVoteGroupStatusHandler(body) {
   if (!votegroup) {
     throw "No voteGroup exist by this id";
   }
-  body.status >= 0? body.status:0;
-  const updateVote = await adminService.updateVoteGroup(votegroup,{status:body.status})
+  body.status >= 0 ? body.status : 0;
+  const updateVote = await adminService.updateVoteGroup(votegroup, { status: body.status })
   const votes = await adminService.getVoteOptionByVoteGroupId(body.id);
-  if(body.status == 0){
+  if (body.status == 0) {
     votes.map(async (item) => {
       const updatevote = adminService.updateVoteOptionStatus(item);
       const keys = await adminService.getKeyByKeyname(item.key);
-      const changeKey = adminService.changeKeyStatus(keys,0);
+      const changeKey = adminService.changeKeyStatus(keys, 0);
       if (updatevote && keys && changeKey) {
         return updatevote;
       } else { return false }
@@ -408,14 +408,14 @@ async function editVoteOptionHandler(body) {
   if (!voteoptions) {
     throw "No voteoption exist by this id";
   }
-  
+
   const key = await adminService.getKeyByKeyname(body.key);
-  
+
   if (key && key.id != voteoptions.UniqueKeyId) {
     throw "Key already exist";
   }
 
-  updatevote= await adminService.editVoteOption(voteoptions,body);
+  updatevote = await adminService.editVoteOption(voteoptions, body);
   if (!updatevote) {
     throw "Unable to update";
   }
@@ -428,15 +428,15 @@ function deleteVoteOption(req, res, next) {
     .catch(err => res.status(500).send({ message: err }));
 }
 
-async function deleteVoteOptionHandler(id){
+async function deleteVoteOptionHandler(id) {
   const voteOption = await adminService.getVoteOptionById(id);
-  if(!voteOption){
+  if (!voteOption) {
     throw "No VoteOption exist with id"
   }
   // console.log(voteOption)
   const vote = await adminService.destroyVoteOption(id);
   const vKey = await adminService.destroyKey(voteOption.UniqueKeyId);
-  if(!vote && !vKey){
+  if (!vote && !vKey) {
     throw "Fail to Delete"
   }
   return vote;
@@ -444,8 +444,8 @@ async function deleteVoteOptionHandler(id){
 
 
 function editShortCode(req, res, next) {
-  if(!req.body.defaultReply || req.body.defaultReply ==""){
-    res.status(401).send({message:"Empty value is not proccessed"})
+  if (!req.body.defaultReply || req.body.defaultReply == "") {
+    res.status(401).send({ message: "Empty value is not proccessed" })
   }
   editShortCodeHandler(req.body)
     .then(resp => res.status(200).send({ message: resp }))
@@ -457,7 +457,7 @@ async function editShortCodeHandler(body) {
   if (!shortcode) {
     throw "Not short code exist by this id";
   }
-  if(body.defaultReply){
+  if (body.defaultReply) {
     const updatecode = await adminService.updateShortCode(shortcode, body.defaultReply);
     if (updatecode) {
       return updatecode;
@@ -466,7 +466,7 @@ async function editShortCodeHandler(body) {
   }
 
   return "Already Updated"
-  
+
 }
 
 function getVoteGroupDetails(req, res, next) {
@@ -477,8 +477,26 @@ function getVoteGroupDetails(req, res, next) {
 
 function getVotesAPI(req, res, next) {
   getVotesOptionHandler(req.params.id)
-    .then(resp => res.status(200).send(resp))
-    .catch(err => res.status(400).send({ message: err }));
+    .then(resp => res.status(200).send({ vote: resp }))
+    .catch(err => res.status(500).send({ message: err }));
+}
+
+function getVotesAPI2(req, res, next) {
+  getVotesOptionHandler2(req.params.id)
+    .then((data) => {
+      return res.render("votes", {
+        response: {
+          success: true,
+          msg: "Successfully fetched",
+          votes:data
+        },
+      });
+    })
+    .catch((error) => {
+      res.render("votes", {
+        response: { success: false, msg: error },
+      });
+    });
 }
 
 async function getVotesOptionHandler(id) {
@@ -487,6 +505,18 @@ async function getVotesOptionHandler(id) {
     throw "Sorry! Votes is not found";
   }
   const votes = await adminService.getVoteOptionByVotesAPI(id);
+
+  if (!votes) {
+    throw "No Votes found in this id "
+  }
+  return votes;
+}
+async function getVotesOptionHandler2(id) {
+  const votegroup = await adminService.getVoteGroupbyId(id);
+  if (!votegroup) {
+    throw "Sorry! Votes is not found";
+  }
+  const votes = await adminService.getVoteOptionByVotesAPI2(id);
 
   if (!votes) {
     throw "No Votes found in this id "
@@ -526,5 +556,6 @@ module.exports = {
   deleteVoteOption,
   changeVoteGroupStatus,
   getVoteGroupDetails,
-  getVotesAPI
+  getVotesAPI,
+  getVotesAPI2
 };

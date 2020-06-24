@@ -10,7 +10,7 @@ const routes = require("./src/routes");
 const PORT = process.env.PORT || 3000;
 
 let app = express();
-
+app.set("view engine", "ejs");
 
 var whitelist = [
   "http://localhost:4200",
