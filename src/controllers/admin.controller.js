@@ -477,7 +477,7 @@ function getVoteGroupDetails(req, res, next) {
 
 function getVotesAPI(req, res, next) {
   getVotesOptionHandler(req.params.id)
-    .then(resp => res.status(200).send({ vote: resp }))
+    .then(resp => res.status(200).send( resp))
     .catch(err => res.status(500).send({ message: err }));
 }
 
